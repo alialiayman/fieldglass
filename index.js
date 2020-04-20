@@ -3,7 +3,8 @@ const puppeteer = require('puppeteer');
 
 let page;
 let websiteUrl = 'https://fieldglass.net';
-const userName = 'aliayman';
+const userName = 'alialiayman';
+const password = '(Paris!@#)';
 const responses = [];
 const steps = new Map();
 
