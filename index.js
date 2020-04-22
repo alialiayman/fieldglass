@@ -13,7 +13,7 @@ automate();
 async function automate() {
     const browser = await puppeteer.launch({ headless: false, args: ['--start-maximized'] });
     page = await browser.newPage();
-    // page.on('domcontentloaded', onPageLoaded);
+    page.on('domcontentloaded', onPageLoaded);
     //page.on('response', onResponse);
     await page.setViewport({
         width: 0,
@@ -23,8 +23,24 @@ async function automate() {
 
     await page.goto(websiteUrl, { waitUntil: 'domcontentloaded' });
     await typeText('#usernameId_new', userName);
+    await typeText('#passwordId_new', password);
+    await page.click('#primary_content > div.entryLoginInput_button > button');
+
 };
 
+async function onPageLoaded() {
+    const url = await page.url();
+    if (page.$('#ts_0 > a'))
+        await page.click('#ts_0 > a');
+
+    if (url.includes('time_sheet_form.do'))
+    fillHours();
+
+}
+
+async function fillHours() {
+    await page.type('#t_z08111601023408009418a16_b_2_r1', '8');
+}
 
 async function typeText(selector, value) {
     await page.waitForSelector(selector);
