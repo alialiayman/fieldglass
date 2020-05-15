@@ -14,6 +14,7 @@ async function automate() {
     const browser = await puppeteer.launch({ headless: false, args: ['--start-maximized'] });
     page = await browser.newPage();
     page.on('domcontentloaded', onPageLoaded);
+    page.on('frameattached', onResponse);
     //page.on('response', onResponse);
     await page.setViewport({
         width: 0,
@@ -32,18 +33,26 @@ async function onPageLoaded() {
     const url = await page.url();
     if (page.$('#ts_0 > a'))
         await page.click('#ts_0 > a');
+}
 
+async function onResponse() {
+    const url = await page.url();
     if (url.includes('time_sheet_form.do'))
-    fillHours();
+        fillHours();
 
 }
 
 async function fillHours() {
-    await page.type('#t_z08111601023408009418a16_b_2_r1', '8');
+    for (i = 2; i <= 6; i++) {
+        await page.type(`#t_z08111601023408009418a16_b_${i}_r1`, '8');
+    }
+    await page.type(`#t_z08111601023408009418a16_b_7_r1`, '0');
 }
 
 async function typeText(selector, value) {
     await page.waitForSelector(selector);
+    const hours = await page.$$eval(selector, el => el.value);
+    if (hours) return;
     await page.$eval(selector, el => el.value = '');
     await page.type(selector, value);
 }
